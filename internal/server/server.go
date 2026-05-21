@@ -4,8 +4,8 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/zesbe/HallowaBackend/internal/config"
-	"github.com/zesbe/HallowaBackend/internal/supabase"
+	"github.com/zesbe/Sebar/internal/config"
+	"github.com/zesbe/Sebar/internal/supabase"
 )
 
 // Identity holds this backend's server row in backend_servers.

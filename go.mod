@@ -1,4 +1,4 @@
-module github.com/zesbe/HallowaBackend
+module github.com/zesbe/Sebar
 
 go 1.25.0
 

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zesbe/HallowaBackend/internal/whatsapp"
+	"github.com/zesbe/Sebar/internal/whatsapp"
 )
 
 type Server struct {

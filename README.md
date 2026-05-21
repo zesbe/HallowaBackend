@@ -1,4 +1,4 @@
-# HalloWa Backend (Go)
+# Sebar — WhatsApp Broadcast Gateway
 
 Drop-in replacement for the Node.js Baileys backend. Talks to the same Supabase project + frontend, same `devices`, `backend_servers`, broadcast tables. Uses [whatsmeow](https://github.com/tulir/whatsmeow) instead of Baileys.
 
@@ -12,7 +12,7 @@ Drop-in replacement for the Node.js Baileys backend. Talks to the same Supabase 
 ## Architecture
 
 ```
-cmd/hallowa-be/main.go              entry point
+cmd/sebar/main.go              entry point
 internal/
   config/                           env loader
   logger/                           structured logs
@@ -29,8 +29,8 @@ internal/
 ```
 cp .env.example .env
 # fill SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SERVER_NAME
-go build -o hallowa-be ./cmd/hallowa-be
-./hallowa-be
+go build -o sebar ./cmd/sebar
+./sebar
 ```
 
 ## Compatibility with the Node backend

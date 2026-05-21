@@ -18,7 +18,7 @@ import (
 	waLog "go.mau.fi/whatsmeow/util/log"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/zesbe/HallowaBackend/internal/supabase"
+	"github.com/zesbe/Sebar/internal/supabase"
 )
 
 // Manager owns the whatsmeow store and the per-device client map.
