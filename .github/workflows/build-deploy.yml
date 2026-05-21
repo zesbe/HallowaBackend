@@ -1,0 +1,81 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build -o hallowa-be ./cmd/hallowa-be
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hallowa-be-linux-arm64
+          path: hallowa-be
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+
+      - name: Build (linux/arm64 for VPS)
+        run: GOOS=linux GOARCH=arm64 go build -o hallowa-be ./cmd/hallowa-be
+
+      - name: SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 6746 -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Upload binary
+        run: |
+          scp -P 6746 hallowa-be \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:_audit/HallowaBackend/hallowa-be.new
+
+      - name: Atomic swap + restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 6746
+          script: |
+            set -e
+            cd ~/_audit/HallowaBackend
+            chmod +x hallowa-be.new
+            mv hallowa-be.new hallowa-be
+            sudo systemctl restart hallowa-be
+            sleep 3
+            sudo systemctl is-active hallowa-be
+            curl -fsS http://localhost:3000/health
