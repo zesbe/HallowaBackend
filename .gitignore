@@ -1,0 +1,16 @@
+/hallowa-be
+/bin/
+*.exe
+*.test
+*.out
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# session db (per-device whatsmeow store) is host-state
+store.db
+*.db-journal
+*.db-wal
+*.db-shm
